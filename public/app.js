@@ -83,9 +83,10 @@ async function loadArticles() {
   hideError();
 
   try {
+    // 加载足够多的文章以显示所有分类
     const params = new URLSearchParams({
-      page: currentPage,
-      limit: ARTICLES_PER_PAGE,
+      page: 1,
+      limit: 200, // 增加限制以显示更多文章
       search: currentSearch
     });
 
@@ -97,7 +98,8 @@ async function loadArticles() {
 
     const data = await response.json();
     displayArticles(data.articles);
-    displayPagination(data.pagination);
+    // 暂时移除分页，因为我们按日期分类显示
+    // displayPagination(data.pagination);
   } catch (err) {
     showError('加载文章失败，请稍后重试');
     console.error('加载错误:', err);
@@ -116,11 +118,11 @@ async function loadStats() {
     const data = await response.json();
     
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const weekAgo = new Date(today);
-    weekAgo.setDate(weekAgo.getDate() - 7);
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    const weekAgoStart = new Date(todayStart);
+    weekAgoStart.setDate(weekAgoStart.getDate() - 7);
     
     let todayCount = 0;
     let yesterdayCount = 0;
@@ -129,11 +131,13 @@ async function loadStats() {
     
     data.articles.forEach(article => {
       const pubDate = new Date(article.pubDate);
-      if (pubDate >= today) {
+      const articleDate = new Date(pubDate.getFullYear(), pubDate.getMonth(), pubDate.getDate());
+      
+      if (articleDate.getTime() === todayStart.getTime()) {
         todayCount++;
-      } else if (pubDate >= yesterday) {
+      } else if (articleDate.getTime() === yesterdayStart.getTime()) {
         yesterdayCount++;
-      } else if (pubDate >= weekAgo) {
+      } else if (articleDate >= weekAgoStart && articleDate < yesterdayStart) {
         weekCount++;
       } else {
         olderCount++;
@@ -166,13 +170,13 @@ function displayArticles(articles) {
     return;
   }
 
-  // 按日期分组
+  // 按日期分组 - 使用本地时间
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const weekAgo = new Date(today);
-  weekAgo.setDate(weekAgo.getDate() - 7);
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+  const weekAgoStart = new Date(todayStart);
+  weekAgoStart.setDate(weekAgoStart.getDate() - 7);
 
   const groups = {
     today: [],
@@ -183,11 +187,13 @@ function displayArticles(articles) {
 
   articles.forEach(article => {
     const pubDate = new Date(article.pubDate);
-    if (pubDate >= today) {
+    const articleDate = new Date(pubDate.getFullYear(), pubDate.getMonth(), pubDate.getDate());
+    
+    if (articleDate.getTime() === todayStart.getTime()) {
       groups.today.push(article);
-    } else if (pubDate >= yesterday) {
+    } else if (articleDate.getTime() === yesterdayStart.getTime()) {
       groups.yesterday.push(article);
-    } else if (pubDate >= weekAgo) {
+    } else if (articleDate >= weekAgoStart && articleDate < yesterdayStart) {
       groups.week.push(article);
     } else {
       groups.older.push(article);
