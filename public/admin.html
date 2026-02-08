@@ -125,6 +125,7 @@
           <div style="display:flex;gap:1rem">
             <button class="btn btn-success" onclick="showAddModal()">+ 添加RSS源</button>
             <button class="btn" style="background:#f59e0b;color:white" onclick="showPasswordModal()">修改密码</button>
+            <button class="btn" style="background:#8b5cf6;color:white" onclick="updateArticleSources()">更新来源名称</button>
             <button class="btn btn-primary" onclick="window.location.href='/'">返回首页</button>
             <button class="btn btn-danger" onclick="logout()">退出登录</button>
           </div>
@@ -380,6 +381,29 @@
         alert('密码修改成功！请记住新密码');
       } else {
         alert('密码修改失败：' + (data.error || '未知错误'));
+      }
+    }
+
+    // 更新所有文章的来源名称
+    async function updateArticleSources() {
+      if (!confirm('确定要更新所有文章的来源名称吗？\n这会将数据库中的旧名称更新为RSS配置中的新名称。')) {
+        return;
+      }
+      
+      const res = await fetch('/api/admin/update-sources', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Password': currentPassword
+        }
+      });
+      
+      const data = await res.json();
+      
+      if (data.success) {
+        alert('✅ 文章来源名称已全部更新！\n刷新首页即可看到新名称。');
+      } else {
+        alert('❌ 更新失败：' + (data.error || '未知错误'));
       }
     }
   </script>
