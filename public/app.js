@@ -17,8 +17,6 @@ const error = document.getElementById('error');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const refreshBtn = document.getElementById('refreshBtn');
-const totalArticlesEl = document.getElementById('totalArticles');
-const lastUpdateEl = document.getElementById('lastUpdate');
 
 // ========================================
 // 初始化
@@ -114,13 +112,39 @@ async function loadArticles() {
 
 async function loadStats() {
   try {
-    const response = await fetch('/health');
+    const response = await fetch('/api/articles?limit=1000'); // 获取所有文章用于统计
     const data = await response.json();
     
-    if (data.status === 'ok') {
-      totalArticlesEl.textContent = data.articlesCount || 0;
-      lastUpdateEl.textContent = formatDateTime(data.lastCheck);
-    }
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const weekAgo = new Date(today);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    
+    let todayCount = 0;
+    let yesterdayCount = 0;
+    let weekCount = 0;
+    let olderCount = 0;
+    
+    data.articles.forEach(article => {
+      const pubDate = new Date(article.pubDate);
+      if (pubDate >= today) {
+        todayCount++;
+      } else if (pubDate >= yesterday) {
+        yesterdayCount++;
+      } else if (pubDate >= weekAgo) {
+        weekCount++;
+      } else {
+        olderCount++;
+      }
+    });
+    
+    document.getElementById('totalArticles').textContent = data.pagination.total || 0;
+    document.getElementById('todayCount').textContent = todayCount;
+    document.getElementById('yesterdayCount').textContent = yesterdayCount;
+    document.getElementById('weekCount').textContent = weekCount;
+    document.getElementById('olderCount').textContent = olderCount;
   } catch (err) {
     console.error('加载统计失败:', err);
   }
@@ -168,7 +192,7 @@ function displayArticles(articles) {
         
         <div class="article-footer">
           <span class="article-author">
-            ✍️ ${escapeHtml(article.author)}
+            ✍️ ${escapeHtml(article.source)}
           </span>
           <a href="${escapeHtml(article.link)}" 
              class="read-more" 
