@@ -151,7 +151,7 @@ async function loadStats() {
 }
 
 // ========================================
-// 显示文章列表
+// 显示文章列表（按日期分类）
 // ========================================
 
 function displayArticles(articles) {
@@ -166,7 +166,63 @@ function displayArticles(articles) {
     return;
   }
 
-  articlesGrid.innerHTML = articles.map(article => `
+  // 按日期分组
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const groups = {
+    today: [],
+    yesterday: [],
+    week: [],
+    older: []
+  };
+
+  articles.forEach(article => {
+    const pubDate = new Date(article.pubDate);
+    if (pubDate >= today) {
+      groups.today.push(article);
+    } else if (pubDate >= yesterday) {
+      groups.yesterday.push(article);
+    } else if (pubDate >= weekAgo) {
+      groups.week.push(article);
+    } else {
+      groups.older.push(article);
+    }
+  });
+
+  // 生成HTML
+  let html = '';
+  
+  const sections = [
+    { key: 'today', title: '📅 今天', articles: groups.today },
+    { key: 'yesterday', title: '📅 昨天', articles: groups.yesterday },
+    { key: 'week', title: '📅 本周', articles: groups.week },
+    { key: 'older', title: '📅 更早', articles: groups.older }
+  ];
+
+  sections.forEach(section => {
+    if (section.articles.length > 0) {
+      html += `
+        <div style="grid-column: 1/-1;">
+          <h2 class="section-title">${section.title}</h2>
+        </div>
+      `;
+      
+      section.articles.forEach(article => {
+        html += generateArticleCard(article);
+      });
+    }
+  });
+
+  articlesGrid.innerHTML = html;
+}
+
+function generateArticleCard(article) {
+  return `
     <article class="article-card" onclick="openArticle('${escapeHtml(article.link)}')">
       ${article.imageUrl ? `
         <img src="${escapeHtml(article.imageUrl)}" 
@@ -205,7 +261,7 @@ function displayArticles(articles) {
         </div>
       </div>
     </article>
-  `).join('');
+  `;
 }
 
 // ========================================
