@@ -4,6 +4,7 @@ const cron = require('node-cron');
 const path = require('path');
 const db = require('./database');
 const { fetchArticles } = require('./fetcher');
+const rssManager = require('./rss-manager');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -102,6 +103,67 @@ app.post('/api/fetch', async (req, res) => {
       error: error.message 
     });
   }
+});
+
+// ========================================
+// RSS管理后台 API
+// ========================================
+
+// 验证密码中间件
+function authMiddleware(req, res, next) {
+  const password = req.headers['x-admin-password'];
+  if (!password || !rssManager.verifyPassword(password)) {
+    return res.status(401).json({ success: false, error: '未授权' });
+  }
+  next();
+}
+
+// 验证密码
+app.post('/api/admin/verify', (req, res) => {
+  const { password } = req.body;
+  const isValid = rssManager.verifyPassword(password);
+  res.json({ success: isValid });
+});
+
+// 获取所有RSS源
+app.get('/api/admin/feeds', authMiddleware, (req, res) => {
+  const feeds = rssManager.getAllRSSFeeds();
+  res.json({ success: true, feeds });
+});
+
+// 添加RSS源
+app.post('/api/admin/feeds', authMiddleware, (req, res) => {
+  const { name, url } = req.body;
+  if (!name || !url) {
+    return res.status(400).json({ success: false, error: '缺少参数' });
+  }
+  const success = rssManager.addRSSFeed(name, url);
+  res.json({ success });
+});
+
+// 更新RSS源
+app.put('/api/admin/feeds/:id', authMiddleware, (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+  const success = rssManager.updateRSSFeed(id, updates);
+  res.json({ success });
+});
+
+// 删除RSS源
+app.delete('/api/admin/feeds/:id', authMiddleware, (req, res) => {
+  const { id } = req.params;
+  const success = rssManager.deleteRSSFeed(id);
+  res.json({ success });
+});
+
+// 修改密码
+app.post('/api/admin/change-password', authMiddleware, (req, res) => {
+  const { newPassword } = req.body;
+  if (!newPassword || newPassword.length < 6) {
+    return res.status(400).json({ success: false, error: '密码至少6位' });
+  }
+  const success = rssManager.changePassword(newPassword);
+  res.json({ success });
 });
 
 // 服务前端页面

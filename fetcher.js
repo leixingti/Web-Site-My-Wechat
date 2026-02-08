@@ -1,5 +1,6 @@
 const Parser = require('rss-parser');
 const db = require('./database');
+const { getRSSFeeds } = require('./rss-manager');
 
 const parser = new Parser({
   customFields: {
@@ -10,36 +11,10 @@ const parser = new Parser({
   }
 });
 
-// ⭐ 配置您的 we-mp-rss 服务
-const WE_MP_RSS_BASE_URL = 'https://we-mp-rss-production-fcb0.up.railway.app';
-
-// ⭐ RSS源列表 - 已配置您的 we-mp-rss 服务
-const RSS_FEEDS = [
-  {
-    name: 'WAIC',
-    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3201788143.rss',
-  },
-  {
-    name: '机器之心',
-    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3098132220.rss',
-  },
-  {
-    name: '量子位',
-    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3271041950.rss',
-  },
-  {
-    name: 'AI前线',
-    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3236757533.rss',
-  },
-  {
-    name: '新智元',
-    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3073282833.rss',
-  },
-  {
-    name: '智能涌现',
-    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3582835969.rss',
-  },
-];
+// 从配置文件动态获取RSS源
+function getActiveFeeds() {
+  return getRSSFeeds();
+}
 
 /**
  * 从单个RSS源抓取文章
@@ -116,6 +91,19 @@ async function fetchFromFeed(feed) {
 async function fetchArticles() {
   console.log('🚀 开始抓取文章...');
   const startTime = Date.now();
+  
+  // 动态获取RSS源列表
+  const RSS_FEEDS = getActiveFeeds();
+  
+  if (RSS_FEEDS.length === 0) {
+    console.log('⚠️  没有配置RSS源');
+    return {
+      totalNew: 0,
+      totalSkip: 0,
+      errors: ['没有配置RSS源'],
+      duration: 0
+    };
+  }
   
   let totalNew = 0;
   let totalSkip = 0;
