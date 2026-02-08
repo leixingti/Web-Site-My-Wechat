@@ -109,8 +109,8 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 定时任务：每小时抓取一次
-cron.schedule('0 * * * *', async () => {
+// 定时任务：每15分钟抓取一次
+cron.schedule('*/15 * * * *', async () => {
   console.log('⏰ 定时任务触发 -', new Date().toLocaleString('zh-CN'));
   try {
     await fetchArticles();
@@ -123,7 +123,7 @@ cron.schedule('0 * * * *', async () => {
 // 启动服务器
 app.listen(PORT, () => {
   console.log(`🚀 服务器运行在 http://localhost:${PORT}`);
-  console.log(`⏰ 定时任务已设置：每小时抓取一次文章`);
+  console.log(`⏰ 定时任务已设置：每15分钟抓取一次文章`);
   console.log(`📊 健康检查：http://localhost:${PORT}/health`);
   
   // 启动时立即抓取一次
