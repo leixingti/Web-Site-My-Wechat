@@ -16,15 +16,29 @@ const WE_MP_RSS_BASE_URL = 'https://we-mp-rss-production-fcb0.up.railway.app';
 // ⭐ RSS源列表 - 已配置您的 we-mp-rss 服务
 const RSS_FEEDS = [
   {
-    name: '所有订阅公众号',
-    url: `${WE_MP_RSS_BASE_URL}/feed/all.rss`, // ✅ 正确的RSS链接
+    name: '公众号1',
+    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3201788143.rss',
   },
-  
-  // 💡 如果您想单独订阅特定公众号，可以添加更多RSS源：
-  // {
-  //   name: '公众号名称',
-  //   url: `${WE_MP_RSS_BASE_URL}/feed/公众号名称.rss`,
-  // },
+  {
+    name: '公众号2',
+    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3098132220.rss',
+  },
+  {
+    name: '公众号3',
+    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3271041950.rss',
+  },
+  {
+    name: '公众号4',
+    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3236757533.rss',
+  },
+  {
+    name: '公众号5',
+    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3073282833.rss',
+  },
+  {
+    name: '公众号6',
+    url: 'https://we-mp-rss-production-fcb0.up.railway.app/feed/MP_WXS_3582835969.rss',
+  },
 ];
 
 /**
