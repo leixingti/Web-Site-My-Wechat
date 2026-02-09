@@ -65,7 +65,7 @@ body {
 }
 
 .logo {
-  font-size: 1.5rem;
+  font-size: 2.25rem; /* 从 1.5rem 增加到 2.25rem (增加50%) */
   font-weight: 700;
   color: var(--primary-color);
   white-space: nowrap;
@@ -91,7 +91,7 @@ body {
   padding: 0.625rem 1rem;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  font-size: 0.875rem;
+  font-size: 1.3125rem; /* 从 0.875rem 增加到 1.3125rem (增加50%) */
   outline: none;
   transition: all 0.2s;
 }
@@ -108,7 +108,7 @@ body {
   color: white;
   border: none;
   border-radius: var(--radius-md);
-  font-size: 0.875rem;
+  font-size: 1.3125rem; /* 从 0.875rem 增加到 1.3125rem (增加50%) */
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -160,13 +160,13 @@ body {
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: 1.3125rem; /* 从 0.875rem 增加到 1.3125rem (增加50%) */
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 
 .stat-value {
-  font-size: 1.875rem;
+  font-size: 2.8125rem; /* 从 1.875rem 增加到 2.8125rem (增加50%) */
   font-weight: 700;
   color: var(--primary-color);
 }
@@ -268,7 +268,7 @@ body {
 }
 
 .article-title {
-  font-size: 1.125rem;
+  font-size: 1.6875rem; /* 从 1.125rem 增加到 1.6875rem (增加50%) */
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 0.75rem;
@@ -280,7 +280,7 @@ body {
 }
 
 .article-description {
-  font-size: 0.875rem;
+  font-size: 1.3125rem; /* 从 0.875rem 增加到 1.3125rem (增加50%) */
   color: var(--text-secondary);
   line-height: 1.6;
   display: -webkit-box;
@@ -443,7 +443,7 @@ body {
    ======================================== */
 
 .section-title {
-  font-size: 1.5rem;
+  font-size: 2.25rem; /* 从 1.5rem 增加到 2.25rem (增加50%) */
   font-weight: 700;
   color: var(--text-primary);
   margin: 2rem 0 1rem 0;
