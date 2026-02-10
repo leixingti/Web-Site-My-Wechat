@@ -108,7 +108,7 @@ async function loadArticles() {
 }
 
 // ========================================
-// 显示文章列表（不分组，直接分页显示）
+// 显示文章列表（按日期分组+分页）
 // ========================================
 
 function displayArticlesGrouped(articles) {
@@ -124,16 +124,66 @@ function displayArticlesGrouped(articles) {
     return;
   }
 
+  // 按日期分组
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const groups = {
+    today: { title: '📅 今天', articles: [] },
+    yesterday: { title: '📅 昨天', articles: [] },
+    week: { title: '📅 本周', articles: [] },
+    older: { title: '📅 更早', articles: [] }
+  };
+
+  articles.forEach(article => {
+    const pubDate = new Date(article.pubDate);
+    if (pubDate >= today) {
+      groups.today.articles.push(article);
+    } else if (pubDate >= yesterday) {
+      groups.yesterday.articles.push(article);
+    } else if (pubDate >= weekAgo) {
+      groups.week.articles.push(article);
+    } else {
+      groups.older.articles.push(article);
+    }
+  });
+
   // 计算分页
   const start = (currentPage - 1) * ARTICLES_PER_PAGE;
   const end = start + ARTICLES_PER_PAGE;
   
-  // 生成HTML - 直接显示文章，不分组
+  // 生成HTML - 按组显示
   let html = '';
-  const pageArticles = articles.slice(start, end);
+  let articleCount = 0;
   
-  pageArticles.forEach(article => {
-    html += generateArticleCard(article);
+  ['today', 'yesterday', 'week', 'older'].forEach(groupKey => {
+    const group = groups[groupKey];
+    if (group.articles.length > 0) {
+      // 计算这个组在当前页应该显示多少文章
+      const groupStart = Math.max(0, start - articleCount);
+      const groupEnd = Math.max(0, end - articleCount);
+      
+      if (groupStart < group.articles.length) {
+        // 添加分组标题
+        html += `
+          <div style="grid-column: 1/-1;">
+            <h2 class="section-title">${group.title}</h2>
+          </div>
+        `;
+        
+        // 添加该组的文章
+        const groupArticles = group.articles.slice(groupStart, groupEnd);
+        groupArticles.forEach(article => {
+          html += generateArticleCard(article);
+        });
+      }
+      
+      articleCount += group.articles.length;
+    }
   });
 
   articlesGrid.innerHTML = html;
@@ -314,15 +364,24 @@ function formatDate(dateString) {
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
+  const weeks = Math.floor(diff / (86400000 * 7));
+  const months = Math.floor(diff / (86400000 * 30));
   
-  if (minutes < 60) {
+  if (minutes < 1) {
+    return `刚刚`;
+  } else if (minutes < 60) {
     return `${minutes}分钟前`;
   } else if (hours < 24) {
     return `${hours}小时前`;
   } else if (days < 7) {
     return `${days}天前`;
+  } else if (weeks < 4) {
+    return `${weeks}周前`;
+  } else if (months < 12) {
+    return `${months}个月前`;
   } else {
-    return date.toLocaleDateString('zh-CN');
+    const years = Math.floor(months / 12);
+    return `${years}年前`;
   }
 }
 
