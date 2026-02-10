@@ -11,103 +11,73 @@
   <header class="header">
     <div class="container">
       <div class="header-content">
-        <h1 class="logo">IT行业动态</h1>
+        <h1 class="logo">微信公众号</h1>
         <div class="header-actions">
-          <input type="text" id="searchInput" placeholder="搜索文章标题或内容..." class="search-input">
-          <button id="searchBtn" class="btn btn-primary">🔍 搜索</button>
-          <button id="refreshBtn" class="btn btn-success">🔄 刷新</button>
+          <div class="search-box">
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="搜索文章标题或内容..."
+              class="search-input"
+            >
+            <button id="searchBtn" class="search-btn">🔍</button>
+          </div>
+          <button id="refreshBtn" class="refresh-btn">刷新</button>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- 新文章提醒条 -->
-  <div id="newArticlesNotification" class="new-articles-notification">
-    <div class="notification-content">
-      <span class="notification-icon">🔔</span>
-      <span class="notification-text">
-        有 <strong id="newArticlesCount">1篇</strong> 新文章
-      </span>
-      <button id="refreshNewBtn" class="notification-btn">点击刷新</button>
-      <button id="closeNotification" class="notification-close">×</button>
-    </div>
-  </div>
-
-  <!-- 统计卡片 -->
-  <section class="stats-section">
+  <!-- 主内容区 -->
+  <main class="main">
     <div class="container">
-      <div class="stats-grid-horizontal">
+      <!-- 统计信息 -->
+      <div class="stats" id="stats">
         <div class="stat-card">
           <div class="stat-label">文章总数</div>
-          <div class="stat-value" id="totalArticles">0</div>
+          <div class="stat-value" id="totalArticles">-</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">今天</div>
-          <div class="stat-value" id="todayCount">0</div>
+          <div class="stat-value" id="todayCount">-</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">昨天</div>
-          <div class="stat-value" id="yesterdayCount">0</div>
+          <div class="stat-value" id="yesterdayCount">-</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">本周</div>
-          <div class="stat-value" id="weekCount">0</div>
+          <div class="stat-value" id="weekCount">-</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">更早</div>
-          <div class="stat-value" id="olderCount">0</div>
+          <div class="stat-value" id="olderCount">-</div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- 三板块Tab导航 -->
-  <section class="tabs-section">
-    <div class="container">
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="ai_news">
-          <span class="tab-text">聚焦AI行业</span>
-        </button>
-        <button class="tab-btn" data-tab="it_news">
-          <span class="tab-text">IT行业新闻</span>
-        </button>
-        <button class="tab-btn" data-tab="conferences">
-          <span class="tab-text">AI行业会议</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 主内容区 -->
-  <main class="main-content">
-    <div class="container">
       <!-- 加载状态 -->
       <div id="loading" class="loading" style="display: none;">
         <div class="spinner"></div>
-        <p>正在加载...</p>
+        <p>加载中...</p>
       </div>
 
       <!-- 错误提示 -->
       <div id="error" class="error" style="display: none;"></div>
 
-      <!-- AI行业新闻板块 -->
-      <div id="ai-news-panel" class="tab-panel active">
-        <div id="articlesGrid" class="articles-grid"></div>
-        <div id="pagination" class="pagination"></div>
-      </div>
+      <!-- 文章列表 -->
+      <div class="articles-grid" id="articlesGrid"></div>
 
-      <!-- IT行业动态板块 -->
-      <div id="it-news-panel" class="tab-panel">
-        <div id="itArticlesGrid" class="articles-grid"></div>
-        <div id="itPagination" class="pagination"></div>
-      </div>
-
-      <!-- AI行业会议板块 -->
-      <div id="conferences-panel" class="tab-panel">
-        <div id="conferencesList" class="conferences-list"></div>
-      </div>
+      <!-- 分页 -->
+      <div class="pagination" id="pagination"></div>
     </div>
   </main>
+
+  <!-- 底部 -->
+  <footer class="footer">
+    <div class="container">
+      <p></p>
+    </div>
+  </footer>
 
   <script src="app.js"></script>
 </body>
